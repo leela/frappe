@@ -19,6 +19,7 @@ class MariaDBTable(DBTable):
 		# create table
 		frappe.db.sql("""create table `%s` (
 			name varchar({varchar_len}) not null primary key,
+			tenant_id varchar({varchar_len}),
 			creation datetime(6),
 			modified datetime(6),
 			modified_by varchar({varchar_len}),

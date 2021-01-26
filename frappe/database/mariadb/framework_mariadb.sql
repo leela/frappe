@@ -1,3 +1,4 @@
+
 -- Core Elements to install WNFramework
 -- To be called from install.py
 
@@ -331,4 +332,26 @@ CREATE TABLE `tabDefaultValue` (
   PRIMARY KEY (`name`),
   KEY `parent` (`parent`),
   KEY `defaultvalue_parent_defkey_index` (`parent`,`defkey`)
+) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Table structure for table `tanTenant`
+--
+
+
+DROP TABLE IF EXISTS `tabTenant`;
+CREATE TABLE `tabTenant` (
+  `name` varchar(255) NOT NULL,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(255) DEFAULT NULL,
+  `owner` varchar(255) DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `parent` varchar(255) DEFAULT NULL,
+  `parentfield` varchar(255) DEFAULT NULL,
+  `parenttype` varchar(255) DEFAULT NULL,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  "tenant_name" varchar(255) UNIQUE,
+  "status" VARCHAR(64) CHECK (status IN ('Active', 'Disabled'))
+  PRIMARY KEY (`name`),
 ) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
