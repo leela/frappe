@@ -27,7 +27,9 @@ def get_db(host=None, user=None, password=None, port=None):
 	import frappe
 	if frappe.conf.db_type == 'postgres':
 		import frappe.database.postgres.database
-		return frappe.database.postgres.database.PostgresDatabase(host, user, password, port=port)
+		db = frappe.database.postgres.database.PostgresDatabase(host, user, password, port=port)
+		db.sql(f"SELECT set_config('app.current_tenant', '{frappe.local.tenant_id}', false);")
+		return db
 	else:
 		import frappe.database.mariadb.database
 		return frappe.database.mariadb.database.MariaDBDatabase(host, user, password, port=port)

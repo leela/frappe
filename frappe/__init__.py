@@ -153,6 +153,7 @@ def init(site, sites_path=None, new_site=False):
 	local.test_objects = {}
 
 	local.site = site
+	local.tenant_id = None
 	local.sites_path = sites_path
 	local.site_path = os.path.join(sites_path, site)
 	local.all_apps = None

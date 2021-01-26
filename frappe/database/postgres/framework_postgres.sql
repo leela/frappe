@@ -340,3 +340,26 @@ CREATE TABLE "tabDefaultValue" (
 
 create index on "tabDefaultValue" ("parent");
 create index on "tabDefaultValue" ("parent", "defkey");
+
+DROP TABLE IF EXISTS "tabTenant";
+CREATE TABLE "tabTenant" (
+  "name" varchar(255) NOT NULL,
+  "creation" timestamp(6) DEFAULT NULL,
+  "modified" timestamp(6) DEFAULT NULL,
+  "modified_by" varchar(255) DEFAULT NULL,
+  "owner" varchar(255) DEFAULT NULL,
+  "docstatus" smallint NOT NULL DEFAULT 0,
+  "parent" varchar(255) DEFAULT NULL,
+  "parentfield" varchar(255) DEFAULT NULL,
+  "parenttype" varchar(255) DEFAULT NULL,
+  "idx" bigint NOT NULL DEFAULT 0,
+  "tenant_name" varchar(255) UNIQUE,
+  "status" VARCHAR(64) CHECK (status IN ('Active', 'Disabled'))
+);
+
+create index on "tabTenant" ("name");
+ALTER TABLE "tabTenant" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "tabTenant" FORCE ROW LEVEL SECURITY;
+CREATE POLICY `tabTenant_isolation_policy` ON `tabTenant` FOR SELECT
+  USING (name = current_setting('app.current_tenant')::integer);
+

@@ -71,6 +71,9 @@ def _new_site(
 		db_port=db_port,
 		no_mariadb_socket=no_mariadb_socket,
 	)
+
+	add_tenant()
+
 	apps_to_install = (
 		["frappe"] + (frappe.conf.get("install_apps") or []) + (list(install_apps) or [])
 	)
@@ -88,6 +91,14 @@ def _new_site(
 	)
 	print("*** Scheduler is", scheduler_status, "***")
 
+
+def add_tenant():
+	# TODO: FIX ME
+	frappe.local.tenant_id = frappe.local.site
+	# TODO: make sure that tenant with this name does not exist
+	# doc = frappe.new_doc('Tenant')
+	# doc.tenant_name = frappe.local.site
+	# doc.save()
 
 def install_db(root_login="root", root_password=None, db_name=None, source_sql=None,
 			   admin_password=None, verbose=True, force=0, site_config=None, reinstall=False,

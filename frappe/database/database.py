@@ -18,6 +18,7 @@ from time import time
 from frappe.utils import now, getdate, cast_fieldtype, get_datetime
 from frappe.utils.background_jobs import execute_job, get_queue
 from frappe.model.utils.link_count import flush_local_link_count
+from frappe.model import ignore_fields
 from frappe.utils import cint
 
 # imports - compatibility imports
@@ -402,7 +403,6 @@ class Database(object):
 			# returns default date_format
 			frappe.db.get_value("System Settings", None, "date_format")
 		"""
-
 		ret = self.get_values(doctype, filters, fieldname, ignore, as_dict, debug,
 			order_by, cache=cache, for_update=for_update)
 
@@ -592,7 +592,6 @@ class Database(object):
 		conditions, values = self.build_conditions(filters)
 
 		order_by = ("order by " + order_by) if order_by else ""
-
 		r = self.sql("select {fields} from `tab{doctype}` {where} {conditions} {order_by} {for_update}"
 			.format(
 				for_update = 'for update' if for_update else '',
@@ -884,6 +883,7 @@ class Database(object):
 				where table_name = %s ''', table)]
 
 			if columns:
+				columns = [column for column in columns if column not in ignore_fields]
 				frappe.cache().hset('table_columns', table, columns)
 
 		return columns

@@ -16,7 +16,8 @@ class PostgresTable(DBTable):
 		# TODO: set docstatus length
 		# create table
 		frappe.db.sql("""create table `%s` (
-			name varchar({varchar_len}) not null primary key,
+			name varchar({varchar_len}) not null,
+			tenant_id varchar({varchar_len}) not null DEFAULT current_setting('app.current_tenant'),
 			creation timestamp(6),
 			modified timestamp(6),
 			modified_by varchar({varchar_len}),
@@ -26,7 +27,17 @@ class PostgresTable(DBTable):
 			parentfield varchar({varchar_len}),
 			parenttype varchar({varchar_len}),
 			idx bigint not null default '0',
+			PRIMARY KEY (tenant_id, name),
 			%s)""".format(varchar_len=frappe.db.VARCHAR_LEN) % (self.table_name, add_text))
+
+		frappe.db.sql(
+			"ALTER TABLE `%s` ENABLE ROW LEVEL SECURITY;" % (self.table_name))
+		frappe.db.sql(
+			"ALTER TABLE `%s` FORCE ROW LEVEL SECURITY;" % (self.table_name))
+
+		frappe.db.sql("""CREATE POLICY `%s_isolation_policy` ON `%s`
+			USING (tenant_id = current_setting('app.current_tenant'));
+			""" % (self.table_name, self.table_name))
 
 		frappe.db.commit()
 
