@@ -4,12 +4,14 @@
 
 from __future__ import unicode_literals
 
-import frappe
-from frappe.utils import cstr, encode
 import os
 import sys
-import inspect
 import traceback
+import functools
+
+import frappe
+from frappe.utils import cstr, encode
+import inspect
 import linecache
 import pydoc
 import cgitb
@@ -190,3 +192,34 @@ def clear_old_snapshots():
 
 def get_error_snapshot_path():
 	return frappe.get_site_path('error-snapshots')
+
+def get_default_args(func):
+	"""Get default arguments of a function from its signature.
+	"""
+	signature = inspect.signature(func)
+	return {k: v.default
+		for k, v in signature.parameters.items() if v.default is not inspect.Parameter.empty}
+
+def raise_error_on_no_output(error_message, error_type=None):
+	"""Decorate any function to throw error incase of missing output.
+
+	>>> @raise_error_on_no_output("Ingradients missing")
+	... def get_indradients(_raise_error=1): return
+	...
+	>>> get_indradients()
+	`Exception Name`: Ingradients missing
+	"""
+	def decorator_raise_error_on_no_output(func):
+		@functools.wraps(func)
+		def wrapper_raise_error_on_no_output(*args, **kwargs):
+			response = func(*args, **kwargs)
+
+			default_kwargs = get_default_args(func)
+			default_raise_error = default_kwargs.get('_raise_error')
+			raise_error = kwargs.get('_raise_error') if '_raise_error' in kwargs else default_raise_error
+
+			if (not response) and raise_error:
+				frappe.throw(error_message, error_type or Exception)
+			return response
+		return wrapper_raise_error_on_no_output
+	return decorator_raise_error_on_no_output
