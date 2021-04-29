@@ -383,6 +383,10 @@ class EmailAccount(Document):
 			account_details[doc_field_name] = (value and value[0]) or default
 		return account_details
 
+	def smtp_conn(self):
+		# TODO: FixMe
+		return SMTPServer()
+
 	def handle_incoming_connect_error(self, description):
 		if test_internet():
 			if self.get_failed_attempts_count() > 2:
