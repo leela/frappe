@@ -1,5 +1,6 @@
 import redis
-from rq import Connection, Queue, Worker
+from rq import Connection, Queue
+from frappe.utils.rq_namespace import WorkerNamespace as Worker
 from rq.logutils import setup_loghandlers
 from frappe.utils import cstr
 from collections import defaultdict

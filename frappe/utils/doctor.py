@@ -1,6 +1,7 @@
 import frappe.utils
 from collections import defaultdict
-from rq import Worker, Connection
+from rq import Connection
+from frappe.utils.rq_namespace import WorkerNamespace as Worker
 from frappe.utils.background_jobs import get_redis_conn, get_queue, get_queue_list
 from frappe.utils.scheduler import is_scheduler_disabled, is_scheduler_inactive
 

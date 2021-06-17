@@ -4,7 +4,8 @@
 import json
 from typing import TYPE_CHECKING, Dict, List
 
-from rq import Queue, Worker
+from rq import Queue
+from frappe.utils.rq_namespace import WorkerNamespace as Worker
 
 import frappe
 from frappe import _
@@ -13,7 +14,7 @@ from frappe.utils.background_jobs import get_redis_conn
 from frappe.utils.scheduler import is_scheduler_inactive
 
 if TYPE_CHECKING:
-	from rq.job import Job
+	from frappe.utils.rq_namespace import JobSiteNamespace as Job
 
 JOB_COLORS = {
 	'queued': 'orange',
